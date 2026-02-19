@@ -24,7 +24,7 @@ const app = express();
 
 const allowedOrigins = new Set([
   "http://localhost:5173",
-  "https://booking-system-ts-dun.vercel.app/",
+  "https://booking-system-ts-dun.vercel.app",
 ]);
 
 app.use(
