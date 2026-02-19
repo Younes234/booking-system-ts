@@ -20,7 +20,30 @@ import {
 dotenv.config();
 
 const app = express();
-app.use(cors());
+//app.use(cors());
+
+const allowedOrigins = new Set([
+  "http://localhost:5173",
+  "https://booking-system-ts-dun.vercel.app/",
+]);
+
+app.use(
+  cors({
+    origin: (origin, cb) => {
+      if (!origin) return cb(null, true);
+      return allowedOrigins.has(origin)
+        ? cb(null, true)
+        : cb(new Error(`CORS blocked: ${origin}`));
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
+
+app.options("*", cors());
+
+
 app.use(express.json());
 
 // Health check
