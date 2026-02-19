@@ -1,0 +1,66 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+//generator client {
+//  provider = "prisma-client"
+//  output   = "../generated/prisma"
+//}
+
+//datasource db {
+//  provider = "sqlite"
+//  url      = env("DATABASE_URL")
+//}
+
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id             Int             @id @default(autoincrement())
+  username       String          @unique
+  password       String          // hashed password
+  isAdmin        Boolean         @default(false)
+  createdAt      DateTime        @default(now())
+
+  bookings       Booking[]
+  waitlistEntries WaitlistEntry[]
+}
+
+model Booking {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  date      DateTime // the class date (we normalize to midnight)
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, date]) // A user can only book once per day
+}
+
+model WaitlistEntry {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  date      DateTime // same as Booking
+  position  Int      // place in queue (1 = first)
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, date])  // cannot be in waitlist twice
+  @@index([date, position]) // optimize promotion lookup
+}
+
+model ClassSchedule {
+  id           Int      @id @default(autoincrement())
+  dayOfWeek    Int      @unique // 0 = Sunday ... 6 = Saturday
+  classDetails String
+  startTime    String   // "18:00"
+  capacity     Int
+  enabled      Boolean  @default(true)
+}

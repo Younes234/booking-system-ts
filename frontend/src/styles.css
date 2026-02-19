@@ -1,0 +1,348 @@
+:root {
+  --bg: #0f1115;
+  --card: #161a22;
+  --muted: #9aa3b2;
+  --text: #e6e9ef;
+  --accent: #7c5cff;
+  --accent-soft: #5bd6ff;
+  --accent-2: #34c759;
+  --danger: #ff453a;
+  --border: #252a35;
+}
+
+/* GLOBAL RESET */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* GENERIC ELEMENTS */
+
+button {
+  border-radius: 12px;
+  border: 1px solid transparent;
+  padding: 11px 14px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  background: var(--accent);
+  color: #fff;
+  transition: transform 0.06s ease, opacity 0.2s ease,
+    background 0.15s ease, box-shadow 0.15s ease;
+}
+
+button.secondary {
+  background: #1a1f2a;
+  border-color: var(--border);
+}
+
+button.danger {
+  background: var(--danger);
+}
+
+button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+button:active {
+  transform: translateY(1px);
+}
+
+/* REUSABLE UI TOKENS */
+
+.card {
+  background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.02),
+      rgba(0, 0, 0, 0.08)
+    ),
+    var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 18px 18px 16px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+}
+
+.row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--border);
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: #12151c;
+  font-size: 13px;
+}
+
+.chip {
+  background: #0e1118;
+  border: 1px solid var(--border);
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+}
+
+.list {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 8px 0 4px;
+}
+
+.progress {
+  width: 100%;
+  height: 10px;
+  background: #0e1118;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  overflow: hidden;
+  margin: 10px 0 6px;
+}
+
+.progress > span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent-soft));
+  width: 0%;
+  transition: width 0.3s ease;
+}
+
+.spacer {
+  height: 8px;
+}
+
+/* HEADER / APP SHELL (LOGGED IN) */
+
+.app-root {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  
+  display: flex;
+  flex-direction: column;
+  justify-content: center;    /* vertical center */
+  align-items: center;        /* horizontal center */
+  
+  padding: 20px;
+  overflow-y: auto;           /* admin panel scrolls */
+}
+
+.app-header {
+  width: 100%;
+  max-width: 600px;
+  text-align: center;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  margin-bottom: 20px;
+}
+
+.app-header-left {
+  align-items: center;
+}
+
+.app-header-right {
+  margin-top: 6px;
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+
+.app-header h1 {
+  margin: 0;
+  font-size: 28px;
+  letter-spacing: 0.2px;
+}
+
+.app-header .sub {
+  color: var(--muted);
+  font-size: 30px;
+}
+
+.app-logo {
+  width: 70px;
+  height: auto;
+}
+
+/* GRID LAYOUT AFTER LOGIN */
+
+.main-grid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.card {
+  width: 100%;
+  max-width: 600px;
+}
+
+
+@media (min-width: 840px) {
+  .main-grid {
+    grid-template-columns: 1.2fr 0.8fr;
+  }
+}
+
+/* INPUTS */
+
+.input {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: #0e1118;
+  color: var(--text);
+  outline: none;
+  font-size: 14px;
+}
+
+.input::placeholder {
+  color: #5b6270;
+}
+
+/* LOGIN PAGE */
+.login-page {
+  position: fixed;          /* detach from document flow */
+  top: 0;
+  left: 0;
+  width: 100vw;             /* full viewport width */
+  height: 100vh;            /* full viewport height */
+  display: flex;
+  justify-content: center;  /* center left/right */
+  align-items: center;      /* center top/bottom */
+  background: var(--bg);
+  padding: 20px;
+  z-index: 10;              /* sits above everything */
+}
+
+.login-inner {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+
+.login-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 6px;
+}
+
+.login-brand .app-logo {
+  width: 80px;
+  height: auto;
+}
+
+/* Remove default h2 margin inside login card */
+.card h2 {
+  margin-top: 0;
+}
+
+/* Tighten card padding for login */
+.login-page .card {
+  padding-top: 8px;   /* instead of 24–32px */
+}
+
+
+/* ADMIN PANEL */
+
+.admin-tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.admin-tabs button {
+  padding-inline: 12px;
+}
+
+.admin-section {
+  margin-top: 10px;
+}
+
+.admin-list {
+  margin-top: 8px;
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+/* WEEKLY SCHEDULE */
+
+.week-day {
+  border-top: 1px solid var(--border);
+  padding: 10px 0;
+}
+
+.week-day-title {
+  font-weight: 600;
+  font-size: 14px;
+  width: 110px;
+}
+
+/* STATUS TEXT */
+
+.status-text {
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+/* SIMPLE TOAST / MESSAGE AREA */
+
+.message {
+  margin-top: 8px;
+  font-size: 14px;
+  color: var(--accent-soft);
+}
+
+.message.error {
+  color: var(--danger);
+}
+
+/* SMALL UTILITIES */
+
+.mt-8 {
+  margin-top: 8px;
+}
+
+.mt-12 {
+  margin-top: 12px;
+}
+
+.mt-16 {
+  margin-top: 16px;
+}
+
+.mt-20 {
+  margin-top: 20px;
+}
