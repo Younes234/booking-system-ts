@@ -22,10 +22,12 @@ dotenv.config();
 const app = express();
 //app.use(cors());
 
-const allowedOrigins = new Set([
-  "http://localhost:5173",
-  "https://booking-system-ts-dun.vercel.app",
-]);
+const allowedOrigins = new Set(
+  [
+    "http://localhost:5173",
+    process.env.FRONTEND_URL,
+  ].filter(Boolean)
+);
 
 app.use(
   cors({

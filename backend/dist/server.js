@@ -11,7 +11,24 @@ const bookings_1 = require("./bookings");
 const admin_1 = require("./admin");
 dotenv_1.default.config();
 const app = (0, express_1.default)();
-app.use((0, cors_1.default)());
+//app.use(cors());
+const allowedOrigins = new Set([
+    "http://localhost:5173",
+    process.env.FRONTEND_URL,
+].filter(Boolean));
+app.use((0, cors_1.default)({
+    origin: (origin, cb) => {
+        if (!origin)
+            return cb(null, true);
+        return allowedOrigins.has(origin)
+            ? cb(null, true)
+            : cb(new Error(`CORS blocked: ${origin}`));
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+}));
+//app.options("*", cors());
 app.use(express_1.default.json());
 // Health check
 app.get("/api/health", (req, res) => {
@@ -38,7 +55,7 @@ app.get("/api/admin/bookings/today", auth_1.authMiddleware, admin_1.requireAdmin
 app.get("/api/admin/bookings/history", auth_1.authMiddleware, admin_1.requireAdmin, admin_1.attendanceHistory);
 app.get("/api/admin/schedule", auth_1.authMiddleware, admin_1.requireAdmin, admin_1.getSchedule);
 app.post("/api/admin/schedule", auth_1.authMiddleware, admin_1.requireAdmin, admin_1.updateSchedule);
-const PORT = process.env.PORT || 4000;
+const PORT = Number(process.env.PORT) || 4000;
 app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);
 });
