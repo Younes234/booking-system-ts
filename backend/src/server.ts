@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import rateLimit from "express-rate-limit";
 
 import { loginHandler, authMiddleware } from "./auth";
 import { getTodayStatus, bookToday, cancelToday } from "./bookings";
@@ -20,6 +21,8 @@ import {
 dotenv.config();
 
 const app = express();
+app.set("trust proxy", 1);
+
 //app.use(cors());
 
 const allowedOrigins = new Set(
@@ -43,10 +46,25 @@ app.use(
   })
 );
 
-//app.options("*", cors());
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 200,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: "Too many requests. Please try again later." },
+});
 
+//app.options("*", cors());
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10, // 10 attempts per IP per window
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: "Too many login attempts. Please try again later." },
+});
 
 app.use(express.json());
+app.use("/api", apiLimiter);
 
 // Health check
 app.get("/api/health", (req, res) => {
@@ -54,7 +72,7 @@ app.get("/api/health", (req, res) => {
 });
 
 // Public route
-app.post("/api/login", loginHandler);
+app.post("/api/login", loginLimiter, loginHandler);
 
 // Protected test route
 app.get("/api/protected", authMiddleware, (req, res) => {
