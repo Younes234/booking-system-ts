@@ -25,20 +25,23 @@ app.set("trust proxy", 1);
 
 //app.use(cors());
 
-const allowedOrigins = new Set(
-  [
-    "http://localhost:5173",
-    process.env.FRONTEND_URL,
-  ].filter(Boolean)
-);
+const allowedOrigins = [
+  "http://localhost:5173",
+  process.env.FRONTEND_URL,
+].filter(Boolean) as string[];
 
 app.use(
   cors({
     origin: (origin, cb) => {
       if (!origin) return cb(null, true);
-      return allowedOrigins.has(origin)
+
+      const isAllowed =
+        allowedOrigins.includes(origin) ||
+        origin === "https://allstylesbooking.vercel.app";
+
+      return isAllowed
         ? cb(null, true)
-        : cb(new Error(`CORS blocked: ${origin}`));
+        : cb(null, false);
     },
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
