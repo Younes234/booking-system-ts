@@ -17,38 +17,23 @@ import {
   requireAdmin
 } from "./admin";
 
-
 dotenv.config();
 
 const app = express();
 app.set("trust proxy", 1);
 
-//app.use(cors());
+// ✅ TEMP: Allow all origins to fix CORS issues
+const corsOptions = {
+  origin: true,
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+};
 
-const allowedOrigins = [
-  "http://localhost:5173",
-  process.env.FRONTEND_URL,
-].filter(Boolean) as string[];
+app.use(cors(corsOptions));
+app.options(/.*/, cors(corsOptions));
 
-app.use(
-  cors({
-    origin: (origin, cb) => {
-      if (!origin) return cb(null, true);
-
-      const isAllowed =
-        allowedOrigins.includes(origin) ||
-        origin === "https://allstylesbooking.vercel.app";
-
-      return isAllowed
-        ? cb(null, true)
-        : cb(null, false);
-    },
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
-);
-
+// Rate limiting
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 200,
@@ -57,10 +42,9 @@ const apiLimiter = rateLimit({
   message: { error: "Too many requests. Please try again later." },
 });
 
-//app.options("*", cors());
 const loginLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 10, // 10 attempts per IP per window
+  windowMs: 15 * 60 * 1000,
+  max: 10,
   standardHeaders: true,
   legacyHeaders: false,
   message: { error: "Too many login attempts. Please try again later." },
@@ -77,7 +61,7 @@ app.get("/api/health", (req, res) => {
 // Public route
 app.post("/api/login", loginLimiter, loginHandler);
 
-// Protected test route
+// Protected routes
 app.get("/api/protected", authMiddleware, (req, res) => {
   res.json({
     message: "You accessed a protected route!",
@@ -100,7 +84,6 @@ app.get("/api/admin/bookings/history", authMiddleware, requireAdmin, attendanceH
 
 app.get("/api/admin/schedule", authMiddleware, requireAdmin, getSchedule);
 app.post("/api/admin/schedule", authMiddleware, requireAdmin, updateSchedule);
-
 
 const PORT = Number(process.env.PORT) || 4000;
 
