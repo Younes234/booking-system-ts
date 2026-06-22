@@ -22,9 +22,19 @@ dotenv.config();
 const app = express();
 app.set("trust proxy", 1);
 
-// ✅ TEMP: Allow all origins to fix CORS issues
+// ✅ SAFE CORS (only allow your frontend + localhost)
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://allstylesbooking.vercel.app",
+];
+
 const corsOptions = {
-  origin: true,
+  origin: (origin: string | undefined, cb: Function) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      return cb(null, true);
+    }
+    return cb(null, false);
+  },
   credentials: true,
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
@@ -33,7 +43,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.options(/.*/, cors(corsOptions));
 
-// Rate limiting
+// 🔒 Rate limiting
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 200,
